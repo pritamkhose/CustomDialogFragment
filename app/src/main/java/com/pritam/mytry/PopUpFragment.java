@@ -1,5 +1,7 @@
 package com.pritam.mytry;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 public class PopUpFragment extends DialogFragment implements View.OnClickListener {
 
     private TextView tv_display;
+    private Integer qty;
+    private Integer itempostion;
 
     public PopUpFragment() {
         // Empty constructor is required for DialogFragment
@@ -20,11 +24,11 @@ public class PopUpFragment extends DialogFragment implements View.OnClickListene
     }
 
 
-    public static PopUpFragment newInstance(Integer itemPos, Integer itemQty, String title ) {
+    public static PopUpFragment newInstance(Integer itempostion, Integer itemQty, String title ) {
         PopUpFragment frag = new PopUpFragment();
         Bundle args = new Bundle();
-        args.putInt("itempostion", 0);
-        args.putInt("qty", 10);
+        args.putInt("itempostion", itempostion);
+        args.putInt("qty", itemQty);
         args.putString("title", title);
         frag.setArguments(args);
         return frag;
@@ -69,9 +73,9 @@ public class PopUpFragment extends DialogFragment implements View.OnClickListene
         TextView tv_supply_name = (TextView) view.findViewById(R.id.tv_supply_name);
 
         // Fetch arguments from bundle and set title
-        Integer qty = getArguments().getInt("qty", 0);
+        qty = getArguments().getInt("qty", 0);
         tv_display.setText(qty.toString());
-        Integer itempostion = getArguments().getInt("itempostion", 0);
+        itempostion = getArguments().getInt("itempostion", 0);
         String title = getArguments().getString("title", "");
         tv_supply_name.setText(title);
 
@@ -81,6 +85,34 @@ public class PopUpFragment extends DialogFragment implements View.OnClickListene
 //        // Show soft keyboard automatically and request focus to field
 //        mEditText.requestFocus();
 //        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    @Override
+    public void onDismiss(final DialogInterface dialog) {
+        super.onDismiss(dialog);
+        try{
+            qty = Integer.parseInt(tv_display.getText().toString());
+        } catch (NumberFormatException e){
+            qty = 0;
+        }
+        itempostion = qty * itempostion;
+
+        if(mListener != null){
+            mListener.onMyCustomAction("--> "+itempostion + " / "+ qty);
+        }
+//        final Activity activity = getActivity();
+//        if (activity instanceof DialogInterface.OnDismissListener) {
+//            ((DialogInterface.OnDismissListener) activity).onDismiss(dialog);
+//        }
+    }
+
+    private static CustomDismissListener mListener;
+
+    public static void setMyCustomListener(CustomDismissListener listener){
+        mListener = listener;
+    }
+    public interface CustomDismissListener{
+        void onMyCustomAction(String str);
     }
 
     @Override

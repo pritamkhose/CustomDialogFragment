@@ -1,6 +1,8 @@
 package com.pritam.mytry;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +14,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +27,21 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-
                 FragmentManager fm = getSupportFragmentManager();
-                PopUpFragment editNameDialogFragment = PopUpFragment.newInstance(0, 10, "customer");
+                PopUpFragment editNameDialogFragment = PopUpFragment.newInstance(2, 10, "customer");
                 editNameDialogFragment.show(fm, "fragment_edit_name");
+                PopUpFragment.setMyCustomListener(new PopUpFragment.CustomDismissListener() {
+                    @Override
+                    public void onMyCustomAction(String str){
+                        Snackbar.make( getWindow().getDecorView().getRootView(), "op " + str , Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                });
 
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
